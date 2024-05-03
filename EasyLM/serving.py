@@ -1,8 +1,4 @@
-import dataclasses
 import pprint
-from functools import partial
-import re
-import os
 from threading import Lock
 import urllib
 import time
@@ -10,15 +6,15 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 import absl.logging
-from tqdm import tqdm, trange
+from tqdm import trange
 import numpy as np
-import mlxu
 from ml_collections import ConfigDict
 import uvicorn
 from fastapi import FastAPI
 import gradio as gr
 import requests
 from requests.exceptions import Timeout, ConnectionError
+from security import safe_requests
 
 
 class InferenceRequest(BaseModel):
@@ -454,7 +450,7 @@ class LMClient(object):
             return
         while True:
             try:
-                requests.get(urllib.parse.urljoin(self.config.url, 'ready'))
+                safe_requests.get(urllib.parse.urljoin(self.config.url, 'ready'))
                 return
             except (Timeout, ConnectionError) as e:
                 time.sleep(10)
