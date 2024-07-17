@@ -4,7 +4,6 @@ from typing import Any, Mapping, Text, Tuple, Union, NamedTuple
 from functools import partial
 import re
 import dataclasses
-import random
 
 import dill
 import flax
@@ -22,6 +21,7 @@ from flax.training.train_state import TrainState
 from flax.core import FrozenDict
 import optax
 from transformers import FlaxLogitsWarper
+import secrets
 
 
 class JaxRNG(object):
@@ -110,7 +110,7 @@ def make_shard_and_gather_fns(partition_specs, dtype_specs=None):
 
 def set_random_seed(seed):
     np.random.seed(seed)
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
     init_rng(seed)
 
 
