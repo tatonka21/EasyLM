@@ -19,6 +19,7 @@ from fastapi import FastAPI
 import gradio as gr
 import requests
 from requests.exceptions import Timeout, ConnectionError
+from security import safe_requests
 
 
 class InferenceRequest(BaseModel):
@@ -454,7 +455,7 @@ class LMClient(object):
             return
         while True:
             try:
-                requests.get(urllib.parse.urljoin(self.config.url, 'ready'))
+                safe_requests.get(urllib.parse.urljoin(self.config.url, 'ready'))
                 return
             except (Timeout, ConnectionError) as e:
                 time.sleep(10)
