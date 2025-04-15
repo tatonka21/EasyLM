@@ -454,7 +454,7 @@ class LMClient(object):
             return
         while True:
             try:
-                requests.get(urllib.parse.urljoin(self.config.url, 'ready'))
+                requests.get(urllib.parse.urljoin(self.config.url, 'ready'), timeout=60)
                 return
             except (Timeout, ConnectionError) as e:
                 time.sleep(10)
@@ -466,8 +466,8 @@ class LMClient(object):
 
         response = requests.post(
             urllib.parse.urljoin(self.config.url, 'loglikelihood'),
-            json={'prefix_text': prefix, 'text': text}
-        ).json()
+            json={'prefix_text': prefix, 'text': text}, 
+        timeout=60).json()
         return response['log_likelihood'], response['is_greedy']
 
     def loglikelihood_rolling(self, text):
@@ -476,8 +476,8 @@ class LMClient(object):
             return [-1.0 for _ in text], [False for _ in text]
         response = requests.post(
             urllib.parse.urljoin(self.config.url, 'loglikelihood-rolling'),
-            json={'text': text}
-        ).json()
+            json={'text': text}, 
+        timeout=60).json()
         return response['log_likelihood'], response['is_greedy']
 
     def greedy_until(self, prefix, until):
@@ -486,8 +486,8 @@ class LMClient(object):
             return until
         response = requests.post(
             urllib.parse.urljoin(self.config.url, 'greedy-until'),
-            json={'prefix_text': prefix, 'until': until}
-        ).json()
+            json={'prefix_text': prefix, 'until': until}, 
+        timeout=60).json()
         return response['output_text']
 
     def generate(self, prefix, temperature=None):
@@ -499,8 +499,8 @@ class LMClient(object):
             json={
                 'prefix_text': prefix,
                 'temperature': temperature,
-            }
-        ).json()
+            }, 
+        timeout=60).json()
         return response['output_text']
 
     def chat(self, prompt, context, temperature=None):
@@ -512,6 +512,6 @@ class LMClient(object):
                 'prompt': prompt,
                 'context': context,
                 'temperature': temperature,
-            }
-        ).json()
+            }, 
+        timeout=60).json()
         return response['response'], response['context']
